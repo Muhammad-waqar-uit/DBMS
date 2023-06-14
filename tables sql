@@ -1,0 +1,63 @@
+-- Table: users
+CREATE TABLE user (
+  address varchar(255) Primary key,
+  name varchar(255),
+  email varchar(255)
+);
+
+
+-- Table: NFT
+CREATE TABLE NFT (
+  NFTID int Primary key,
+  hash varchar(255),
+  auction int,
+  creator varchar(255),
+  currentowner varchar(255),
+  sold int,
+  FOREIGN KEY (creator) REFERENCES User(address),
+  FOREIGN KEY (currentOwner) REFERENCES User(address)
+);
+
+-- Table: Transactions
+CREATE TABLE Transactions (
+  TransactionID INT PRIMARY KEY,
+  buyerAddress VARCHAR(255),
+  sellerAddress VARCHAR(255),
+  price INT,
+  NFTID int,
+  FOREIGN KEY (NFTID) REFERENCES NFT(NFTID)
+  FOREIGN KEY (buyerAddress) REFERENCES User(address),
+   FOREIGN KEY (sellerAddress) REFERENCES User(address)
+);
+
+
+insert into User(address,name,email)
+values("abc","waqar","abc@gmail.com");
+insert into User(address,name,email)
+values("fgc","burhan","burhan@gmail.com");
+
+insert into NFT(NFTID,hash,auction,creator,currentowner,sold)
+values(1,"0x123",1,"abc","abc",0);
+
+insert into NFT(NFTID,hash,auction,creator,currentowner,sold)
+values(2,"0x1256",1,"abc","abc",0);
+insert into Transactions(TransactionID,buyerAddress,sellerAddress,price,NFTID)
+values(1,"fgc","abc",4,1);
+
+SELECT NFT.NFTID, NFT.hash, NFT.currentowner, User.name, User.email
+FROM NFT
+JOIN User ON NFT.currentowner = User.address;
+
+
+SELECT NFT.NFTID, NFT.hash, NFT.creator, User.name, User.email
+FROM NFT
+JOIN User ON NFT.creator = User.address;
+
+
+
+SELECT Transactions.TransactionID, Transactions.price, Transactions.NFTID, Transactions.buyerAddress, Transactions.sellerAddress, NFT.hash, UserBuyer.name AS buyer_name, UserBuyer.email AS buyer_email, UserSeller.name AS seller_name, UserSeller.email AS seller_email
+FROM Transactions
+JOIN NFT ON Transactions.NFTID = NFT.NFTID
+JOIN User AS UserBuyer ON Transactions.buyerAddress = UserBuyer.address
+JOIN User AS UserSeller ON Transactions.sellerAddress = UserSeller.address;
+
